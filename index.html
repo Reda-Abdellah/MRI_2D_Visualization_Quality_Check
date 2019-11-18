@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+
+<html>
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+</head>
+
+<body>
+
+<h1>click 1 for good, 2 for bad: </h1>
+
+<br>
+
+<h2 id='sample'> sample number: 0 </h2>
+<br>
+
+<img height="260" width="260" id="T1_1" src="test_images/0_T1_1.png"> </img>
+<img height="260" width="260" id="T1_2" src="test_images/0_T1_2.png"></img>
+<img height="260" width="260"  id="T1_3" src="test_images/0_T1_3.png"> </img>
+<br>
+<img height="260" width="260"  id="FLAIR_1" src="test_images/0_FLAIR_1.png"> </img>
+<img height="260" width="260" id="FLAIR_2" src="test_images/0_FLAIR_2.png"> </img>
+<img height="260" width="260" id="FLAIR_3" src="test_images/0_FLAIR_3.png"> </img>
+<br>
+<img  height="260" width="260" id="MASK_1" src="test_images/0_MASK_1.png"> </img>
+<img height="260" width="260" id="MASK_2" src="test_images/0_MASK_2.png"> </img>
+<img height="260" width="260" id="MASK_3" src="test_images/0_MASK_3.png"> </img>
+<br>
+<button onclick="OK()">Good</button>
+<button onclick="notOK()">Bad</button>
+<br>
+<br>
+<br>
+<button onclick="download()">download csv</button>
+
+
+
+<script>
+var state=0;
+var myObj=[];
+
+//var myJSON = JSON.stringify(myObj);
+//window.location = "demo_json.php?x=" + myJSON;
+
+
+document.onkeydown = function (e) {
+    var keyCode = e.keyCode;
+    if(keyCode == 49) {
+        OK();}
+    if(keyCode == 50) {
+        notOK();
+    }
+};
+btnZ.onclick = clicked;
+
+
+</script>
+
+
+<script>
+function OK() {
+
+  myObj.push({
+    "img": state,
+    "state": 'good'
+  });
+  update_paths();
+
+}
+
+function update_paths(){
+  state=state+1;
+  document.getElementById("sample").innerHTML = 'sample number: '+state;
+  var T1_1_path='test_images/'.concat(state)+'_T1_1.png';
+  var T1_2_path='test_images/'.concat(state)+'_T1_2.png';
+  var T1_3_path='test_images/'.concat(state)+'_T1_3.png';
+  var FLAIR_1_path='test_images/'.concat(state)+'_FLAIR_1.png';
+  var FLAIR_2_path='test_images/'.concat(state)+'_FLAIR_2.png';
+  var FLAIR_3_path='test_images/'.concat(state)+'_FLAIR_3.png';
+  var MASK_1_path='test_images/'.concat(state)+'_MASK_1.png';
+  var MASK_2_path='test_images/'.concat(state)+'_MASK_2.png';
+  var MASK_3_path='test_images/'.concat(state)+'_MASK_3.png';
+  var x1 = document.getElementById('T1_1');
+  var x2 = document.getElementById("T1_2");
+  var x3 = document.getElementById("T1_3");
+  var x4 = document.getElementById("FLAIR_1");
+  var x5 = document.getElementById("FLAIR_2");
+  var x6 = document.getElementById("FLAIR_3");
+  var x7 = document.getElementById("MASK_1");
+  var x8 = document.getElementById("MASK_2");
+  var x9 = document.getElementById("MASK_3");
+  x1.setAttribute("src", T1_1_path);
+  x2.setAttribute("src", T1_2_path);
+  x3.setAttribute("src", T1_3_path);
+  x4.setAttribute("src", FLAIR_1_path);
+  x5.setAttribute("src", FLAIR_2_path);
+  x6.setAttribute("src", FLAIR_3_path);
+  x7.setAttribute("src", MASK_1_path);
+  x8.setAttribute("src", MASK_2_path);
+  x9.setAttribute("src", MASK_3_path);
+  if(state==500){download();}
+}
+function notOK() {
+  myObj.push({
+    "img": state,
+    "state": 'bad'
+  });
+  update_paths();
+}
+function convertToCSV(objArray) {
+    var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    var str = '';
+
+    for (var i = 0; i < array.length; i++) {
+        var line = '';
+        for (var index in array[i]) {
+            if (line != '') line += ','
+
+            line += array[i][index];
+        }
+
+        str += line + '\r\n';
+    }
+
+    return str;
+}
+
+function exportCSVFile(headers, items, fileTitle) {
+    if (headers) {
+        items.unshift(headers);
+    }
+
+    // Convert Object to JSON
+    var jsonObject = JSON.stringify(items);
+
+    var csv = this.convertToCSV(jsonObject);
+
+    var exportedFilenmae = fileTitle + '.csv' || 'export.csv';
+
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    if (navigator.msSaveBlob) { // IE 10+
+        navigator.msSaveBlob(blob, exportedFilenmae);
+    } else {
+        var link = document.createElement("a");
+        if (link.download !== undefined) { // feature detection
+            // Browsers that support HTML5 download attribute
+            var url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", exportedFilenmae);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+}
+
+function download(){
+  exportCSVFile( 0,myObj, 'out');
+}
+//exportCSVFile(headers, itemsFormatted, fileTitle); // call the exportCSVFile() function t
+
+</script>
+
+
+
+
+
+
+
+
+</body>
+</html>
